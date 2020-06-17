@@ -17,8 +17,9 @@ class StarController extends Controller {
     ##### Get the average value
     public function averageStar() {
         $stars  = Star::all();
-        $average = $stars->avg('vote');
-        return response()->json($average);
+        $countStars = $stars->avg('vote');
+        $averageStars = $stars->count();
+        return response()->json(['count' => $averageStars, 'average' => $countStars]);
     }
 
     ##### TEST - Create dummy data
