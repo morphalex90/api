@@ -16,6 +16,7 @@ class CreateTableStar extends Migration
         Schema::create('star', function (Blueprint $table) {
             $table->id();
             $table->integer('vote');
+            $table->ipAddress('ip');
             $table->timestamp('created_at')->nullable();
             // $table->timestamps();
         });
