@@ -17,20 +17,8 @@ class StarController extends Controller {
     ##### Get the average value
     public function averageStar() {
         $stars  = Star::all();
-        $countStars = $stars->avg('vote');
+        $countStars = number_format($stars->avg('vote'), 2);
         $averageStars = $stars->count();
         return response()->json(['count' => $averageStars, 'average' => $countStars]);
     }
-
-    ##### TEST - Create dummy data
-    // public function createStarr(Request $request) {
-        
-    //     $star = new Star();
-    //     $star->vote = 5;
-    //     // $star->added_on = date('Y-m-d H:i:s');
-
-    //     $star->save();
-
-    //     return response()->json($star);
-    // }
 }
