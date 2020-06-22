@@ -29,7 +29,7 @@ class StarController extends Controller {
         $count = 25;
 
         $url = $data['url'];
-        $id = $data['id'];
+        //$id = $data['id'];
         $auth_username = $data['auth_username'];
         $auth_password = $data['auth_password'];
 
@@ -43,7 +43,7 @@ class StarController extends Controller {
         $count = 40;
 
         $url = $data['url'];
-        $id = $data['id'];
+        //$id = $data['id'];
         $auth_username = $data['auth_username'];
         $auth_password = $data['auth_password'];
 
@@ -57,7 +57,7 @@ class StarController extends Controller {
         $count = 40;
 
         $url = $data['url'];
-        $id = $data['id'];
+        //$id = $data['id'];
         $auth_username = $data['auth_username'];
         $auth_password = $data['auth_password'];
 
@@ -71,7 +71,7 @@ class StarController extends Controller {
         $count = 40;
 
         $url = $data['url'];
-        $id = $data['id'];
+        //$id = $data['id'];
         $auth_username = $data['auth_username'];
         $auth_password = $data['auth_password'];
 
@@ -85,7 +85,7 @@ class StarController extends Controller {
         $count = 40;
 
         $url = $data['url'];
-        $id = $data['id'];
+        //$id = $data['id'];
         $auth_username = $data['auth_username'];
         $auth_password = $data['auth_password'];
 
@@ -99,7 +99,7 @@ class StarController extends Controller {
         $count = 40;
 
         $url = $data['url'];
-        $id = $data['id'];
+        //$id = $data['id'];
         $auth_username = $data['auth_username'];
         $auth_password = $data['auth_password'];
 
@@ -113,7 +113,7 @@ class StarController extends Controller {
         $count = 40;
 
         $url = $data['url'];
-        $id = $data['id'];
+        //$id = $data['id'];
         $auth_username = $data['auth_username'];
         $auth_password = $data['auth_password'];
 
@@ -127,7 +127,7 @@ class StarController extends Controller {
         $count = 40;
 
         $url = $data['url'];
-        $id = $data['id'];
+        //$id = $data['id'];
         $auth_username = $data['auth_username'];
         $auth_password = $data['auth_password'];
 
@@ -141,7 +141,7 @@ class StarController extends Controller {
         $count = 40;
 
         $url = $data['url'];
-        $id = $data['id'];
+        //$id = $data['id'];
         $auth_username = $data['auth_username'];
         $auth_password = $data['auth_password'];
 
