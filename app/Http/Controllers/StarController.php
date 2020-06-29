@@ -13,6 +13,11 @@ class StarController extends Controller {
 
     ##### Create new star
     public function createStar(Request $request) {
+
+        $this->validate($request, [
+            'vote' => 'required|numeric|min:1|max:5'
+        ]);
+
         $star = Star::create($request->all());
         return response()->json($star);
     }
