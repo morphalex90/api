@@ -43,13 +43,6 @@ class StarController extends Controller {
         $auth_username = $data['auth_username'];
         $auth_password = $data['auth_password'];
 
-        ## Mail to myself
-        $headers = "MIME-Version: 1.0" . "\r\n";
-        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-        $headers .= 'From: Info <info@morpheus90.com>' . "\r\n";
-        $content ='Website: '.$url.'<br>';
-        mail('piero.nanni@gmail.com','Tools By Piero Nanni - New Search', $content, $headers);
-
         $site = parse_url($url); // get the array of the url
         $base_url = $site['scheme'].'://'.$site['host']; // build the base_url for later
 
@@ -81,6 +74,13 @@ class StarController extends Controller {
         $data = $request->all();
         $output = '';
         $info = $this->checkUrl($data);
+
+        ## Mail to myself
+        $headers = "MIME-Version: 1.0" . "\r\n";
+        $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+        $headers .= 'From: Info <info@morpheus90.com>' . "\r\n";
+        $content ='Website: '.$data['url'].'<br>';
+        mail('piero.nanni@gmail.com','Tools By Piero Nanni - New Search', $content, $headers);
 
         if( $info ) {
 
