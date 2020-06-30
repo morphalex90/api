@@ -340,8 +340,9 @@ class StarController extends Controller {
             if( $info['auth'] == 1 ) {
                 $response = $client->request('GET', $info['base_url'].'/sitemap.xml', ['auth' =>  [$data['auth_username'], $data['auth_password']]]);
             } else {
-                $response = $client->request('GET', $info['base_url'].'/sitemap.xml', ['allow_redirects' => false]);
+                $response = $client->request('GET', $info['base_url'].'/sitemap.xml', ['allow_redirects' => true]);
             }
+
             if( $response->getStatusCode() == 200) {
                 $sitemap_response = $response->getBody()->getContents();
                 $document = new DOMDocument;
@@ -356,7 +357,6 @@ class StarController extends Controller {
                     $output .= 'Sitemap not found';
                 }
             } else {
-                $output .= 'Sitemap not found';
                 $output .= 'sitemap.xml not found (error '.$response->getStatusCode().')';
             }
         }
