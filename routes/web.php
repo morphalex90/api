@@ -30,6 +30,5 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) { // api/v1
         $router->post('step_sitemap','StarController@stepSitemap'); ##### POST api/v1/tools/step_sitemap
         $router->post('step_others','StarController@stepOthers'); ##### POST api/v1/tools/step_others
         $router->post('step_structured_data','StarController@stepStructuredData'); ##### POST api/v1/tools/step_structured_data
-        $router->post('step_errors','StarController@stepErrors'); ##### POST api/v1/tools/step_errors
     });
 });
