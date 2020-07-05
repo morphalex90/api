@@ -32,3 +32,14 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) { // api/v1
         $router->post('step_structured_data','StarController@stepStructuredData'); ##### POST api/v1/tools/step_structured_data
     });
 });
+
+########
+######## Yahtzee
+
+$router->group(['prefix' => 'api/v1'], function () use ($router) { // api/v1
+    $router->group(['prefix' => 'yahtzee'], function () use ($router) { // api/v1/yahtzee
+
+        $router->post('session','YahtzeeSessionController@store'); ##### Create new session - POST api/v1/yahtzee/session
+        $router->get('sessions','YahtzeeSessionController@index'); ##### Get all sessions - GET api/v1/yahtzee/sessions
+    });
+});
