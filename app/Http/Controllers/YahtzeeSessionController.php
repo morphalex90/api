@@ -22,7 +22,8 @@ class YahtzeeSessionController extends Controller {
     public function store(Request $request) {
 
         $this->validate($request, [
-            'partecipants_max_number' => 'numeric|min:0|max:50'
+            'partecipants_max_number' => 'numeric|min:0|max:50',
+            'name' => 'string|max:40'
         ]);
         $data = $request->all();
         $data['status'] = 'open';
