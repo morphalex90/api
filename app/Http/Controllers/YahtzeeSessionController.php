@@ -8,7 +8,7 @@ use App\YahtzeePlayer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-// use App\Events\SessionEvent;
+use App\Events\SessionEvent;
 
 class YahtzeeSessionController extends Controller {
 
@@ -29,11 +29,11 @@ class YahtzeeSessionController extends Controller {
         $data = $request->all();
         $data['status'] = 'open';
 
-        $star = YahtzeeSession::create($data);
+        $session = YahtzeeSession::create($data);
 
-        // event(new SessionEvent($star));
+        event(new SessionEvent($session));
 
-        return response()->json($star);
+        return response()->json($session);
     }
 
     ##### List players of a session
