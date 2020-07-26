@@ -6,7 +6,7 @@ use App\YahtzeePlayer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-// use App\Events\SessionEvent;
+use App\Events\PlayerJoinEvent;
 
 class YahtzeePlayerController extends Controller {
 
@@ -17,10 +17,11 @@ class YahtzeePlayerController extends Controller {
             'playername' => 'required|string|max:40'
         ]);
         $data = $request->all();
+        $data['status'] = 'waiting';
 
         $player = YahtzeePlayer::create($data);
 
-        // event(new SessionEvent($player));
+        event(new PlayerJoinEvent($player));
 
         return response()->json($player);
     }
