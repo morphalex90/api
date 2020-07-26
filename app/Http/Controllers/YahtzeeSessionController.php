@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
  
 use App\YahtzeeSession;
+use App\YahtzeePlayer;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use DOMDocument;
-use SimpleXMLElement;
- 
+// use App\Events\SessionEvent;
+
 class YahtzeeSessionController extends Controller {
 
     ##### List all sessions
@@ -30,7 +31,16 @@ class YahtzeeSessionController extends Controller {
 
         $star = YahtzeeSession::create($data);
 
+        // event(new SessionEvent($star));
+
         return response()->json($star);
     }
 
+    ##### List players of a session
+    public function players(Request $request, $id) {
+
+        $players = YahtzeePlayer::where('session_id', $id)->get();
+
+        return response()->json(['count' => count($players), 'players' => $players]);
+    }
 }
