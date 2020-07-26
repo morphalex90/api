@@ -17,6 +17,7 @@ class CreatePlayersTable extends Migration
             $table->id();
             $table->string('playername', 40);
             $table->integer('points')->default(0);
+            $table->string('status', 20);
             $table->integer('session_id');
             $table->timestamps();
         });
