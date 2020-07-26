@@ -1,5 +1,6 @@
 <?php
 
+// use App\Event\SessionEvent;
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -7,6 +8,7 @@
 */
 
 $router->get('/', function () use ($router) {
+    // event(new SessionEvent('hello world'));
     return $router->app->version();
 });
 
@@ -41,5 +43,9 @@ $router->group(['prefix' => 'api/v1'], function () use ($router) { // api/v1
 
         $router->post('session','YahtzeeSessionController@store'); ##### Create new session - POST api/v1/yahtzee/session
         $router->get('sessions','YahtzeeSessionController@index'); ##### Get all sessions - GET api/v1/yahtzee/sessions
+        $router->get('session/{id}/players','YahtzeeSessionController@players'); ##### Get all players of a session - GET api/v1/yahtzee/session/players
+
+        $router->post('session/player','YahtzeePlayerController@store'); ##### Create new player - POST api/v1/yahtzee/session/player
+
     });
 });
