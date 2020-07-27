@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use App\Events\PlayerJoinEvent;
+use App\Events\PlayerLeaveEvent;
 
 class YahtzeePlayerController extends Controller {
 
@@ -24,6 +25,17 @@ class YahtzeePlayerController extends Controller {
         event(new PlayerJoinEvent($player));
 
         return response()->json($player);
+    }
+
+     ##### Delete player from channel
+     public function player_leave(Request $request, $session_id, $player_id) {
+
+        $player = YahtzeePlayer::find($player_id);
+        $player->delete();
+
+        event(new PlayerLeaveEvent($player_id));
+
+        return response()->json($player_id);
     }
 
 }
