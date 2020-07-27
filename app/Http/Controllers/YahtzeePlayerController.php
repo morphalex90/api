@@ -33,7 +33,7 @@ class YahtzeePlayerController extends Controller {
         $player = YahtzeePlayer::find($player_id);
         $player->delete();
 
-        event(new PlayerLeaveEvent($player_id));
+        event(new PlayerLeaveEvent($session_id, $player_id));
 
         return response()->json($player_id);
     }
