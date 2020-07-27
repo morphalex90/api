@@ -9,14 +9,14 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 class PlayerJoinEvent implements ShouldBroadcast {
     use InteractsWithSockets, SerializesModels;
 
-    public $message;
+    public $player;
 
-    public function __construct($message) {
-        $this->message = $message;
+    public function __construct($player) {
+        $this->player = $player;
     }
 
     public function broadcastOn() {
-        return ['players'];
+        return ['session-'.$this->player->session_id];
     }
 
     public function broadcastAs() {
