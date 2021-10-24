@@ -1,7 +1,7 @@
 <?php
- 
+
 namespace App\Http\Controllers;
- 
+
 use App\YahtzeePlayer;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -9,10 +9,12 @@ use Illuminate\Http\Request;
 use App\Events\PlayerJoinEvent;
 use App\Events\PlayerLeaveEvent;
 
-class YahtzeePlayerController extends Controller {
+class YahtzeePlayerController extends Controller
+{
 
     ##### Create new player
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
 
         $this->validate($request, [
             'playername' => 'required|string|max:40'
@@ -27,8 +29,9 @@ class YahtzeePlayerController extends Controller {
         return response()->json($player);
     }
 
-     ##### Delete player from channel
-     public function player_leave(Request $request, $session_id, $player_id) {
+    ##### Delete player from channel
+    public function player_leave(Request $request, $session_id, $player_id)
+    {
 
         $player = YahtzeePlayer::find($player_id);
         $player->delete();
@@ -37,5 +40,4 @@ class YahtzeePlayerController extends Controller {
 
         return response()->json($player_id);
     }
-
 }

@@ -1,7 +1,7 @@
 <?php
- 
+
 namespace App\Http\Controllers;
- 
+
 use App\YahtzeeSession;
 use App\YahtzeePlayer;
 
@@ -10,17 +10,20 @@ use Illuminate\Http\Request;
 
 use App\Events\SessionEvent;
 
-class YahtzeeSessionController extends Controller {
+class YahtzeeSessionController extends Controller
+{
 
     ##### List all sessions
-    public function index(Request $request) {
+    public function index(Request $request)
+    {
 
         $sessions  = YahtzeeSession::all();
         return response()->json(['count' => count($sessions), 'sessions' => $sessions]);
     }
 
     ##### Create new session
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
 
         $this->validate($request, [
             'partecipants_max_number' => 'numeric|min:0|max:50',
@@ -37,7 +40,8 @@ class YahtzeeSessionController extends Controller {
     }
 
     ##### List players of a session
-    public function players(Request $request, $id) {
+    public function players(Request $request, $id)
+    {
 
         $players = YahtzeePlayer::where('session_id', $id)->get();
 
