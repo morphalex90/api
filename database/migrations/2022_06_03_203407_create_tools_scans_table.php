@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateStarsTable extends Migration
+class CreateToolsScansTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class CreateStarsTable extends Migration
      */
     public function up()
     {
-        Schema::create('stars', function (Blueprint $table) {
+        Schema::create('tools_scans', function (Blueprint $table) {
             $table->id();
-            $table->unsignedInteger('vote');
+            $table->string('uuid');
+            $table->string('url');
             $table->string('ip_address', 45);
             $table->timestamp('created_at');
         });
@@ -28,6 +29,6 @@ class CreateStarsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('stars');
+        Schema::dropIfExists('tools_scans');
     }
 }
