@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\ToolsScanController;
 use App\Http\Controllers\ToolsStarController;
 use Illuminate\Http\Request;
@@ -39,5 +40,11 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('scans/{scan_uuid}/step_sitemap', [ToolsScanController::class, 'stepSitemap']);
         Route::get('scans/{scan_uuid}/step_others', [ToolsScanController::class, 'stepOthers']);
         Route::get('scans/{scan_uuid}/step_structured_data', [ToolsScanController::class, 'stepStructuredData']);
+    });
+
+    Route::group(['prefix' => 'chat'], function () {
+        Route::get('threads', [ThreadController::class, 'index']);
+        Route::get('threads/{thread_id}', [ThreadController::class, 'show']);
+        Route::get('threads/{thread_id}/messages', [ThreadController::class, 'messages']);
     });
 });
