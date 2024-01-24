@@ -463,7 +463,7 @@ class ToolsScanController extends Controller
             foreach ($linksCanonical as $linkCanonical) {
                 if ($linkCanonical->getAttribute('rel') == 'canonical') {
                     $canonical = (strpos($linkCanonical->getAttribute('href'), $info['url']) !== false ? $linkCanonical->getAttribute('href') : $info['base_url'] . $linkCanonical->getAttribute('href'));
-                    
+
                     // if ($canonical == $info['url'] || $canonical == $info['url'] . '/') {
                     //     $output .= '<tr><td>Canonical</td><td><span style="color:green;">' . $canonical . '</span></td></tr>';
                     // } else {
@@ -472,7 +472,7 @@ class ToolsScanController extends Controller
 
                     $output[] = [
                         'type' => 'Canonical',
-                        'value' => $canonical, 
+                        'value' => $canonical,
                         'color' => ($canonical == $info['url'] || $canonical == $info['url'] . '/' ? 'green' : 'red'),
                     ];
                     $count_others++;
@@ -482,7 +482,7 @@ class ToolsScanController extends Controller
                     // $output .= '<tr><td>Hreflang (' . $linkCanonical->getAttribute('hreflang') . ')</td><td>' . $linkCanonical->getAttribute('href') . '</td></tr>';
                     $output[] = [
                         'type' => 'Hreflang (' . $linkCanonical->getAttribute('hreflang') . ')',
-                        'value' => $linkCanonical->getAttribute('href'), 
+                        'value' => $linkCanonical->getAttribute('href'),
                         'color' => '',
                     ];
                     $count_others++;
