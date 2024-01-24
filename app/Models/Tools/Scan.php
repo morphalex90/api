@@ -1,18 +1,21 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Tools;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ToolsStar extends Model
+class Scan extends Model
 {
     use HasFactory;
 
     const UPDATED_AT = null;
 
     protected $fillable = [
-        'vote',
+        'uuid',
+        'url',
         'ip_address',
     ];
+
+    protected $table = 'tools_scans';
 }

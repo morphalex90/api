@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\ThreadController;
-use App\Http\Controllers\ToolsScanController;
-use App\Http\Controllers\ToolsStarController;
+use App\Http\Controllers\Tools\ScanController;
+use App\Http\Controllers\Tools\StarController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,19 +23,19 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'v1'], function () {
     Route::group(['prefix' => 'tools'], function () {
 
-        Route::post('star', [ToolsStarController::class, 'store']); ##### Create new star - POST api/v1/tools/star
-        Route::get('average_star', [ToolsStarController::class, 'averageStar']); ##### Return average value - GET api/v1/tools/average_star
+        Route::post('star', [StarController::class, 'store']); ##### Create new star - POST api/v1/tools/star
+        Route::get('average_star', [StarController::class, 'averageStar']); ##### Return average value - GET api/v1/tools/average_star
 
-        Route::post('scans', [ToolsScanController::class, 'store']);
-        Route::get('scans/{scan_uuid}', [ToolsScanController::class, 'show']);
-        Route::get('scans/{scan_uuid}/step_links', [ToolsScanController::class, 'stepLinks']);
-        Route::get('scans/{scan_uuid}/step_images', [ToolsScanController::class, 'stepImages']);
-        Route::get('scans/{scan_uuid}/step_headings', [ToolsScanController::class, 'stepHeadings']);
-        Route::get('scans/{scan_uuid}/step_meta', [ToolsScanController::class, 'stepMeta']);
-        Route::get('scans/{scan_uuid}/step_robots', [ToolsScanController::class, 'stepRobots']);
-        Route::get('scans/{scan_uuid}/step_sitemap', [ToolsScanController::class, 'stepSitemap']);
-        Route::get('scans/{scan_uuid}/step_others', [ToolsScanController::class, 'stepOthers']);
-        Route::get('scans/{scan_uuid}/step_structured_data', [ToolsScanController::class, 'stepStructuredData']);
+        Route::post('scans', [ScanController::class, 'store']);
+        Route::get('scans/{scan_uuid}', [ScanController::class, 'show']);
+        Route::get('scans/{scan_uuid}/step_links', [ScanController::class, 'stepLinks']);
+        Route::get('scans/{scan_uuid}/step_images', [ScanController::class, 'stepImages']);
+        Route::get('scans/{scan_uuid}/step_headings', [ScanController::class, 'stepHeadings']);
+        Route::get('scans/{scan_uuid}/step_meta', [ScanController::class, 'stepMeta']);
+        Route::get('scans/{scan_uuid}/step_robots', [ScanController::class, 'stepRobots']);
+        Route::get('scans/{scan_uuid}/step_sitemap', [ScanController::class, 'stepSitemap']);
+        Route::get('scans/{scan_uuid}/step_others', [ScanController::class, 'stepOthers']);
+        Route::get('scans/{scan_uuid}/step_structured_data', [ScanController::class, 'stepStructuredData']);
     });
 
     Route::group(['prefix' => 'chat'], function () {

@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Tools;
 
-use App\Models\ToolsScan;
+use App\Http\Controllers\Controller;
+use App\Models\Tools\Scan;
 use DOMDocument;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use SimpleXMLElement;
 
-class ToolsScanController extends Controller
+class ScanController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -46,7 +47,7 @@ class ToolsScanController extends Controller
             return response()->json(['message' => 'Page is not reachable'], 404);
         }
 
-        $scan = ToolsScan::create([
+        $scan = Scan::create([
             'url' => $request->get('url'),
             'uuid' => Str::uuid(),
             'ip_address' => $request->ip(),
@@ -70,7 +71,7 @@ class ToolsScanController extends Controller
      */
     public function show($uuid)
     {
-        $scan = ToolsScan::where('uuid', $uuid)->select('url', 'created_at')->first();
+        $scan = Scan::where('uuid', $uuid)->select('url', 'created_at')->first();
 
         if ($scan != null) {
             return response()->json(['scan' => $scan], 200);
@@ -126,7 +127,7 @@ class ToolsScanController extends Controller
 
     public function stepLinks($scan_uuid)
     {
-        $scan = ToolsScan::where('uuid', $scan_uuid)->select('url')->first();
+        $scan = Scan::where('uuid', $scan_uuid)->select('url')->first();
         $info = $this->checkUrl(new Request(['url' => $scan->url]));
 
         if ($info != false) {
@@ -198,7 +199,7 @@ class ToolsScanController extends Controller
 
     public function stepImages($scan_uuid)
     {
-        $scan = ToolsScan::where('uuid', $scan_uuid)->select('url')->first();
+        $scan = Scan::where('uuid', $scan_uuid)->select('url')->first();
         $info = $this->checkUrl(new Request(['url' => $scan->url]));
         $output = [];
 
@@ -236,7 +237,7 @@ class ToolsScanController extends Controller
 
     public function stepHeadings($scan_uuid)
     {
-        $scan = ToolsScan::where('uuid', $scan_uuid)->select('url')->first();
+        $scan = Scan::where('uuid', $scan_uuid)->select('url')->first();
         $info = $this->checkUrl(new Request(['url' => $scan->url]));
         $output = [];
 
@@ -265,7 +266,7 @@ class ToolsScanController extends Controller
 
     public function stepMeta($scan_uuid)
     {
-        $scan = ToolsScan::where('uuid', $scan_uuid)->select('url')->first();
+        $scan = Scan::where('uuid', $scan_uuid)->select('url')->first();
         $info = $this->checkUrl(new Request(['url' => $scan->url]));
         $output = [];
 
@@ -385,7 +386,7 @@ class ToolsScanController extends Controller
 
     public function stepRobots($scan_uuid)
     {
-        $scan = ToolsScan::where('uuid', $scan_uuid)->select('url')->first();
+        $scan = Scan::where('uuid', $scan_uuid)->select('url')->first();
         $info = $this->checkUrl(new Request(['url' => $scan->url]));
         $output = '';
 
@@ -414,7 +415,7 @@ class ToolsScanController extends Controller
 
     public function stepSitemap($scan_uuid)
     {
-        $scan = ToolsScan::where('uuid', $scan_uuid)->select('url')->first();
+        $scan = Scan::where('uuid', $scan_uuid)->select('url')->first();
         $info = $this->checkUrl(new Request(['url' => $scan->url]));
         $output = '';
 
@@ -450,7 +451,7 @@ class ToolsScanController extends Controller
 
     public function stepOthers($scan_uuid)
     {
-        $scan = ToolsScan::where('uuid', $scan_uuid)->select('url')->first();
+        $scan = Scan::where('uuid', $scan_uuid)->select('url')->first();
         $info = $this->checkUrl(new Request(['url' => $scan->url]));
         $output = [];
 
@@ -495,7 +496,7 @@ class ToolsScanController extends Controller
 
     public function stepStructuredData($scan_uuid)
     {
-        $scan = ToolsScan::where('uuid', $scan_uuid)->select('url')->first();
+        $scan = Scan::where('uuid', $scan_uuid)->select('url')->first();
         $info = $this->checkUrl(new Request(['url' => $scan->url]));
         $output = '';
 

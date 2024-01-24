@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Tools;
 
-use App\Models\ToolsStar;
+use App\Http\Controllers\Controller;
+use App\Models\Tools\Star;
 use Illuminate\Http\Request;
 
-class ToolsStarController extends Controller
+class StarController extends Controller
 {
     public function store(Request $request) ##### Create new star
     {
-
         $this->validate($request, [
             'vote' => 'required|numeric|min:1|max:5'
         ]);
 
-        ToolsStar::create([
+        Star::create([
             'vote' => $request->get('vote'),
             'ip_address' => $request->ip(),
         ]);
@@ -32,7 +32,7 @@ class ToolsStarController extends Controller
     ##### Get the average value
     public function averageStar()
     {
-        $stars  = ToolsStar::all();
+        $stars  = Star::all();
         $countStars = number_format($stars->avg('vote'), 2);
         $averageStars = $stars->count();
         return response()->json(['count' => $averageStars, 'average' => $countStars]);
