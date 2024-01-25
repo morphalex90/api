@@ -22,4 +22,12 @@ class Person extends Model
     ];
 
     protected $table = 'sw_people';
+
+    /**
+     * The planet that belong to the person.
+     */
+    public function planet()
+    {
+        return $this->hasOne(Planet::class, 'id', 'planet_id')->select('id', 'name');
+    }
 }

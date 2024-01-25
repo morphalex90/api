@@ -13,7 +13,7 @@ class PersonController extends Controller
      */
     public function index()
     {
-        $people = Person::orderBy('name')->get();
+        $people = Person::with('planet')->orderBy('name')->get();
 
         if ($people) {
             return response()->json(['people' => $people], 200);
