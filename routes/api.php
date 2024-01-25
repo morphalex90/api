@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\SW\PersonController;
+use App\Http\Controllers\SW\PlanetController;
 use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\Tools\ScanController;
 use App\Http\Controllers\Tools\StarController;
@@ -42,5 +44,10 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('threads', [ThreadController::class, 'index']);
         Route::get('threads/{thread_id}', [ThreadController::class, 'show']);
         Route::get('threads/{thread_id}/messages', [ThreadController::class, 'messages']);
+    });
+
+    Route::group(['prefix' => 'sw'], function () {
+        Route::get('people', [PersonController::class, 'index']);
+        Route::get('planets', [PlanetController::class, 'index']);
     });
 });
