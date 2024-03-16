@@ -5,7 +5,6 @@ use App\Http\Controllers\SW\PlanetController;
 use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\Tools\ScanController;
 use App\Http\Controllers\Tools\StarController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 ########
