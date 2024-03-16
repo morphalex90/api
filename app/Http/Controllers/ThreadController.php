@@ -16,13 +16,13 @@ class ThreadController extends Controller
     public function index()
     {
         $threads = Thread::with('lastMessage', 'participants')->get();
+
         return response()->json(['threads' => $threads], 200);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -33,7 +33,6 @@ class ThreadController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function show(Request $request)
@@ -50,7 +49,6 @@ class ThreadController extends Controller
     /**
      * Show messages.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function messages(Request $request)
@@ -67,7 +65,6 @@ class ThreadController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */

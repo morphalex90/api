@@ -34,7 +34,7 @@ class StarWarsSync extends Command
 
     private function people($page = 1)
     {
-        ############################### People
+        //############################## People
         $response = Http::get('https://swapi.dev/api/people/?page=' . $page);
         if ($response->status() == 200) {
             $body = json_decode($response->body());
@@ -67,7 +67,7 @@ class StarWarsSync extends Command
 
     private function planets($page = 1)
     {
-        ############################### Planets
+        //############################## Planets
         $response = Http::get('https://swapi.dev/api/planets/?page=' . $page);
         if ($response->status() == 200) {
             $body = json_decode($response->body());

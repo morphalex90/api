@@ -25,16 +25,15 @@ class ScanController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $rules = array(
-            'url'           => 'required|url',
+        $rules = [
+            'url' => 'required|url',
             'auth_username' => 'nullable|string',
             'auth_password' => 'nullable|string',
-        );
+        ];
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
@@ -53,7 +52,7 @@ class ScanController extends Controller
             'ip_address' => $request->ip(),
         ]);
 
-        ## Mail to myself
+        //# Mail to myself
         // $headers = "MIME-Version: 1.0" . "\r\n";
         // $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
         // $headers .= 'From: Info <info@morpheus90.com>' . "\r\n";
@@ -80,17 +79,6 @@ class ScanController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    // public function destroy($id)
-    // {
-    //     //
-    // }
-
     private function checkUrl(Request $request)
     {
         $url = $request->get('url');
@@ -103,7 +91,7 @@ class ScanController extends Controller
         $auth = 0;
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
         if ($auth_username != '' && $auth_password != '') {
-            $response = $client->request('GET', $url, ['auth' =>  [$auth_username, $auth_password]]);
+            $response = $client->request('GET', $url, ['auth' => [$auth_username, $auth_password]]);
             $auth = 1;
         } else {
             $response = $client->request('GET', $url, ['allow_redirects' => false]);
@@ -158,7 +146,7 @@ class ScanController extends Controller
                     $img['title'] = '';
                     $img['src'] = '';
 
-                    if ($link->childNodes->length > 1) { // loop inside the child only if there is content 
+                    if ($link->childNodes->length > 1) { // loop inside the child only if there is content
                         foreach ($link->childNodes as $child) {
                             // echo '<pre>'.print_r($child,1).'</pre>';
                             if ($child->nodeName == 'img') { // get the src only for the images
@@ -172,8 +160,9 @@ class ScanController extends Controller
                         $image_path = (strpos($img['src'], $info['base_url']) !== false ? $img['src'] : $info['base_url'] . $img['src']); // add base url in case the image does not have it
                         $internalText = '<a href="' . $image_path . '" target="_blank" title="Open image"><img src="' . $image_path . '" style="max-width:200px;"></a>';
                     }
-                } else // the internal text is text
+                } else { // the internal text is text
                     $internalText = $link->nodeValue;
+                }
 
                 if ($titolo == '') {
                     $class = 'notitle';
@@ -194,6 +183,7 @@ class ScanController extends Controller
                 ];
             }
         }
+
         return response()->json(['count' => count($links), 'response' => $output]);
     }
 
@@ -244,7 +234,7 @@ class ScanController extends Controller
         if ($info != false) {
 
             $count_headings = 0;
-            $headings = array('h1', 'h2', 'h3', 'h4', 'h5', 'h6');
+            $headings = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
 
             foreach ($headings as $heading) {
                 $temps = $info['dom']->getElementsByTagName($heading);
@@ -313,7 +303,7 @@ class ScanController extends Controller
                     if ($meta->getAttribute('name') == 'theme-color') {
                         $record['content'] = [
                             'color' => $meta->getAttribute('content'),
-                            'content' => $meta->getAttribute('content')
+                            'content' => $meta->getAttribute('content'),
                         ];
                         // $output .= '<td><span style="color:' . $meta->getAttribute('content') . ';">' . $meta->getAttribute('content') . '</span></td></tr>';
                         $overridden = 1;
@@ -329,7 +319,7 @@ class ScanController extends Controller
 
                         $record['content'] = [
                             'color' => ($meta->getAttribute('content') == $info['url'] || $meta->getAttribute('content') == $info['base_url'] . '/' ? 'green' : 'red'),
-                            'content' => $meta->getAttribute('content')
+                            'content' => $meta->getAttribute('content'),
                         ];
                         $overridden = 1;
                     }
@@ -344,7 +334,7 @@ class ScanController extends Controller
 
                         $record['content'] = [
                             'color' => ($meta->getAttribute('content') == $info['url'] || $meta->getAttribute('content') == $info['base_url'] . '/' ? 'green' : 'red'),
-                            'content' => $meta->getAttribute('content')
+                            'content' => $meta->getAttribute('content'),
                         ];
 
                         $overridden = 1;
@@ -360,17 +350,17 @@ class ScanController extends Controller
 
                         $record['content'] = [
                             'color' => (@getimagesize($meta->getAttribute('content')) ? 'green' : 'red'),
-                            'content' => $meta->getAttribute('content')
+                            'content' => $meta->getAttribute('content'),
                         ];
 
                         $overridden = 1;
                     }
 
-                    # DEFAULT
+                    // DEFAULT
                     if (!$overridden) {
                         $record['content'] = [
                             'color' => '',
-                            'content' => $meta->getAttribute('content')
+                            'content' => $meta->getAttribute('content'),
                         ];
                         // $output .= '<td>' . $meta->getAttribute('content') . '</td></tr>';
                     }
@@ -394,7 +384,7 @@ class ScanController extends Controller
 
             $client = new \GuzzleHttp\Client(['http_errors' => false]);
             if ($info['auth'] == 1) {
-                $response = $client->request('GET', $info['base_url'] . '/robots.txt', ['auth' =>  [$info['auth_username'], $info['auth_password']]]);
+                $response = $client->request('GET', $info['base_url'] . '/robots.txt', ['auth' => [$info['auth_username'], $info['auth_password']]]);
             } else {
                 $response = $client->request('GET', $info['base_url'] . '/robots.txt', ['allow_redirects' => false]);
             }
@@ -423,7 +413,7 @@ class ScanController extends Controller
 
             $client = new \GuzzleHttp\Client(['http_errors' => false]);
             if ($info['auth'] == 1) {
-                $response = $client->request('GET', $info['base_url'] . '/sitemap.xml', ['auth' =>  [$info['auth_username'], $info['auth_password']]]);
+                $response = $client->request('GET', $info['base_url'] . '/sitemap.xml', ['auth' => [$info['auth_username'], $info['auth_password']]]);
             } else {
                 $response = $client->request('GET', $info['base_url'] . '/sitemap.xml', ['allow_redirects' => true]);
             }

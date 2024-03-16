@@ -4,7 +4,6 @@ namespace App\Http\Controllers\SW;
 
 use App\Http\Controllers\Controller;
 use App\Models\SW\Person;
-use Illuminate\Http\Request;
 
 class PersonController extends Controller
 {
@@ -18,6 +17,7 @@ class PersonController extends Controller
         if ($people) {
             return response()->json(['people' => $people], 200);
         }
+
         return response()->json(['message' => 'No people available'], 404);
     }
 }
