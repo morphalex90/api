@@ -8,28 +8,38 @@ use Illuminate\Http\Request;
 
 class StarController extends Controller
 {
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(Request $request)
     {
-        $this->validate($request, [
+        $request->validate([
             'vote' => 'required|numeric|min:1|max:5',
         ]);
 
-        Star::create([
-            'vote' => $request->get('vote'),
-            'ip_address' => $request->ip(),
-        ]);
+        $vote = Star::where('ip_address', $request->ip())->first();
+        if ($vote == null) {
+            Star::create([
+                'vote' => $request->get('vote'),
+                'ip_address' => $request->ip(),
+            ]);
 
-        //# Mail to myself
-        // $headers = "MIME-Version: 1.0" . "\r\n";
-        // $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-        // $headers .= 'From: Info <info@morpheus90.com>' . "\r\n";
-        // $content = 'Stars: ' . $star->vote . '<br>';
-        // mail('piero.nanni@gmail.com', 'Tools By Piero Nanni - New Vote', $content, $headers);
+            //# Mail to myself
+            // $headers = "MIME-Version: 1.0" . "\r\n";
+            // $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+            // $headers .= 'From: Info <info@morpheus90.com>' . "\r\n";
+            // $content = 'Stars: ' . $star->vote . '<br>';
+            // mail('piero.nanni@gmail.com', 'Tools By Piero Nanni - New Vote', $content, $headers);
 
-        return response()->json(['message' => 'success']);
+            return response()->json(['message' => 'Thank you for the feedback!']);
+        }
+
+        return response()->json(['message' => 'You already voted'], 403);
     }
 
-    //#### Get the average value
+    /**
+     * Get the average value.
+     */
     public function averageStar()
     {
         $stars = Star::all();

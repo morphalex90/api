@@ -13,19 +13,7 @@ use SimpleXMLElement;
 class ScanController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    // public function index()
-    // {
-    //     //
-    // }
-
-    /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
@@ -64,9 +52,6 @@ class ScanController extends Controller
 
     /**
      * Display the specified resource.
-     *
-     * @param  int  $uuid
-     * @return \Illuminate\Http\Response
      */
     public function show($uuid)
     {

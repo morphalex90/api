@@ -4,13 +4,15 @@ namespace App\Http\Controllers\SW;
 
 use App\Http\Controllers\Controller;
 use App\Models\SW\Person;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class PersonController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request): JsonResponse
     {
         $people = Person::with('planet')->orderBy('name')->get();
 

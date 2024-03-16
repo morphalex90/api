@@ -4,13 +4,15 @@ namespace App\Http\Controllers\SW;
 
 use App\Http\Controllers\Controller;
 use App\Models\SW\Planet;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class PlanetController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request): JsonResponse
     {
         $planets = Planet::orderBy('name')->get();
 
