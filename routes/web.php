@@ -3,9 +3,9 @@
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    if (config('app.env') == 'local') {
-        return 'API v1, Laravel ' . app()->version();
+    if (config('app.env') == 'local' || config('app.env') == 'staging') {
+        return ['Laravel' => app()->version()];
     } else {
-        return redirect('https://www.pieronanni.me');
+        return ['Oi!' => 'What you looking at?!'];
     }
 });
