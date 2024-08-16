@@ -1,9 +1,8 @@
 # API
 
 ## Useful commands
-php artisan --version
+- `php artisan --version`
 
-php artisan make:model Post -mcrf
+- `php artisan make:model Post -mcrf`
 
-
-./vendor/bin/pint
+- `./vendor/bin/pint`
