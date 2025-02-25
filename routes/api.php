@@ -4,14 +4,13 @@ use App\Http\Controllers\Tools\ScanController;
 use App\Http\Controllers\Tools\StarController;
 use Illuminate\Support\Facades\Route;
 
-########
-######## TOOLS
+//////////// TOOLS
 
 Route::group(['prefix' => 'v1'], function () {
     Route::group(['prefix' => 'tools'], function () {
 
-        Route::post('star', [StarController::class, 'store']); ##### Create new star - POST api/v1/tools/star
-        Route::get('average_star', [StarController::class, 'averageStar']); ##### Return average value - GET api/v1/tools/average_star
+        Route::post('star', [StarController::class, 'store']); // Create new star - POST api/v1/tools/star
+        Route::get('average_star', [StarController::class, 'averageStar']); // Return average value - GET api/v1/tools/average_star
 
         Route::post('scans', [ScanController::class, 'store']);
         Route::get('scans/{scan_uuid}', [ScanController::class, 'show']);

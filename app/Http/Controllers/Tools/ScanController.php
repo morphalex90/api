@@ -40,7 +40,7 @@ class ScanController extends Controller
             'ip_address' => $request->ip(),
         ]);
 
-        //# Mail to myself
+        // Mail to myself
         // $headers = "MIME-Version: 1.0" . "\r\n";
         // $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
         // $headers .= 'From: Info <info@morpheus90.com>' . "\r\n";
