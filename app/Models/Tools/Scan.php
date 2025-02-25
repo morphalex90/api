@@ -11,11 +11,16 @@ class Scan extends Model
 
     const UPDATED_AT = null;
 
+    protected $table = 'tools_scans';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
         'uuid',
         'url',
         'ip_address',
     ];
-
-    protected $table = 'tools_scans';
 }

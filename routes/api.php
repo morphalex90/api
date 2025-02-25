@@ -1,11 +1,7 @@
 <?php
 
-use App\Http\Controllers\SW\PersonController;
-use App\Http\Controllers\SW\PlanetController;
-use App\Http\Controllers\ThreadController;
 use App\Http\Controllers\Tools\ScanController;
 use App\Http\Controllers\Tools\StarController;
-use App\Http\Controllers\WM\WasteUserController;
 use Illuminate\Support\Facades\Route;
 
 ########
@@ -27,21 +23,5 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('scans/{scan_uuid}/step_sitemap', [ScanController::class, 'stepSitemap']);
         Route::get('scans/{scan_uuid}/step_others', [ScanController::class, 'stepOthers']);
         Route::get('scans/{scan_uuid}/step_structured_data', [ScanController::class, 'stepStructuredData']);
-    });
-
-    Route::group(['prefix' => 'chat'], function () {
-        Route::get('threads', [ThreadController::class, 'index']);
-        Route::get('threads/{thread_id}', [ThreadController::class, 'show']);
-        Route::get('threads/{thread_id}/messages', [ThreadController::class, 'messages']);
-    });
-
-    Route::group(['prefix' => 'sw'], function () {
-        Route::get('people', [PersonController::class, 'index']);
-        Route::get('planets', [PlanetController::class, 'index']);
-    });
-
-    Route::group(['prefix' => 'wm'], function () {
-        Route::post('users', [WasteUserController::class, 'store']);
-        // Route::get('planets', [PlanetController::class, 'index']);
     });
 });

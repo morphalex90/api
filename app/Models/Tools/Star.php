@@ -11,10 +11,15 @@ class Star extends Model
 
     const UPDATED_AT = null;
 
+    protected $table = 'tools_stars';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
         'vote',
         'ip_address',
     ];
-
-    protected $table = 'tools_stars';
 }
