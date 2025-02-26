@@ -15,10 +15,10 @@ class Cors
      */
     public function handle(Request $request, Closure $next): Response
     {
-        echo ($request->getHost());
-        if (in_array($request->getHost(), ['tools.morpheus90.com']) == false) {
-            return response('', 400);
-        }
+        // echo ($request->getHost());
+        // if (in_array($request->getHost(), ['tools.morpheus90.com']) == false) {
+        //     return response('', 400);
+        // }
 
         $response = $next($request);
 
