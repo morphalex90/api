@@ -15,9 +15,13 @@ class Cors
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if (in_array($request->getHost(), ['tools.morpheus90.com']) == false) {
+            return response('', 400);
+        }
+
         $response = $next($request);
 
-        $response->headers->set('Access-Control-Allow-Origin', 'https://tools.morpheus90.com');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
         $response->headers->set('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT, DELETE');
         $response->headers->set('Access-Control-Allow-Credentials', 'true');
         $response->headers->set('Access-Control-Max-Age', '86400');
