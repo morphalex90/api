@@ -15,9 +15,8 @@ class Cors
      */
     public function handle(Request $request, Closure $next): Response
     {
-        echo ($request->header('origin'));
-        if (in_array($request->getHost(), ['tools.morpheus90.com']) == false) {
-            return response('', 400);
+        if (in_array($request->header('origin'), ['https://tools.morpheus90.com']) == false) {
+            return response('Unauthorized.', 401);
         }
 
         $response = $next($request);
