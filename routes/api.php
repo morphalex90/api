@@ -4,7 +4,7 @@ use App\Http\Controllers\Tools\ScanController;
 use App\Http\Controllers\Tools\StarController;
 use Illuminate\Support\Facades\Route;
 
-//////////// TOOLS
+// TOOLS
 
 Route::group(['prefix' => 'v1'], function () {
     Route::group(['prefix' => 'tools'], function () {
