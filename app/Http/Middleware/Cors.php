@@ -11,11 +11,11 @@ class Cors
     /**
      * Handle an incoming request.
      *
-     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (in_array($request->header('origin'), ['https://tools.morpheus90.com']) == false) {
+        if (in_array($request->header('origin'), ['https://tools.morpheus90.com']) === false) {
             return response('Unauthorized.', 401);
         }
 

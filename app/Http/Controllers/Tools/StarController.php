@@ -18,7 +18,7 @@ class StarController extends Controller
         ]);
 
         $vote = Star::where('ip_address', $request->ip())->first();
-        if ($vote == null) {
+        if ($vote === null) {
             Star::create([
                 'vote' => $request->get('vote'),
                 'ip_address' => $request->ip(),
