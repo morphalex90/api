@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Tools;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tools\Star;
 use Illuminate\Http\Request;
 
-class StarController extends Controller
+final class StarController extends Controller
 {
     /**
      * Store a newly created resource in storage.

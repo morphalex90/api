@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\Tools\ScanController;
 use App\Http\Controllers\Tools\StarController;
 use Illuminate\Support\Facades\Route;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Tools;
 
 use App\Http\Controllers\Controller;
@@ -10,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use SimpleXMLElement;
 
-class ScanController extends Controller
+final class ScanController extends Controller
 {
     /**
      * Store a newly created resource in storage.
@@ -93,7 +95,7 @@ class ScanController extends Controller
                 $internalText = '';
                 $titolo = $link->getAttribute('title');
 
-                if (trim($link->nodeValue) === '') { // if there is no text inside, search for images or other (using trim function because there might be spaces or tabs)
+                if (mb_trim($link->nodeValue) === '') { // if there is no text inside, search for images or other (using trim function because there might be spaces or tabs)
 
                     $img['title'] = '';
                     $img['src'] = '';
