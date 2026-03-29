@@ -2,8 +2,7 @@
 <h1>>API - Laravel</h1>
 
 [![tests](https://github.com/morphalex90/api/actions/workflows/tests.yml/badge.svg)](https://github.com/morphalex90/api/actions/workflows/tests.yml)
-[![linter](https://github.com/morphalex90/api/actions/workflows/lint.yml/badge.svg)](https://github.com/morphalex90/api/actions/workflows/lint.yml)
-![Static Badge](https://img.shields.io/badge/Laravel-v12.x-red?style=flat&logo=laravel&label=Laravel)
+![Static Badge](https://img.shields.io/badge/Laravel-v13.x-red?style=flat&logo=laravel&label=Laravel)
 ![Static Badge](https://img.shields.io/badge/PHP-8.4-4F5B93?style=flat&logo=php&php=8.4)
 </div>
 
