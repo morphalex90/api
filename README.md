@@ -1,5 +1,5 @@
 <div align="center">
-<h1>>API - Laravel</h1>
+<h1>API - Laravel</h1>
 
 [![tests](https://github.com/morphalex90/api/actions/workflows/tests.yml/badge.svg)](https://github.com/morphalex90/api/actions/workflows/tests.yml)
 ![Static Badge](https://img.shields.io/badge/Laravel-v13.x-red?style=flat&logo=laravel&label=Laravel)
