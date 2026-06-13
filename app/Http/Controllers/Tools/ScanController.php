@@ -7,7 +7,10 @@ namespace App\Http\Controllers\Tools;
 use App\Http\Controllers\Controller;
 use App\Models\Tools\Scan;
 use DOMDocument;
+use DOMElement;
+use DOMXPath;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use SimpleXMLElement;
@@ -27,12 +30,16 @@ final class ScanController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()->all()], 403);
+            return response()->json(['message' => $validator->errors()->all()], 422);
         }
 
-        $requestUrl = new Request($request->all());
-        $response = $this->checkUrl($requestUrl);
-        if ($response === false) {
+        $page = $this->fetchPage(
+            $request->get('url'),
+            $request->get('auth_username'),
+            $request->get('auth_password'),
+        );
+
+        if ($page === false) {
             return response()->json(['message' => 'Page is not reachable'], 404);
         }
 
@@ -42,12 +49,8 @@ final class ScanController extends Controller
             'ip_address' => $request->ip(),
         ]);
 
-        // Mail to myself
-        // $headers = "MIME-Version: 1.0" . "\r\n";
-        // $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
-        // $headers .= 'From: Info <info@morpheus90.com>' . "\r\n";
-        // $content = 'Website: ' . $request->get('url') . '<br>';
-        // mail('piero.nanni@gmail.com', 'Tools By Piero Nanni - New Search', $content, $headers);
+        // Prime the cache so the first step does not refetch the page.
+        Cache::put($this->cacheKey($scan->uuid), $page, now()->addMinutes(10));
 
         return response()->json(['uuid' => $scan->uuid], 200);
     }
@@ -69,13 +72,13 @@ final class ScanController extends Controller
 
     public function stepLinks($scan_uuid)
     {
-        $scan = Scan::where('uuid', $scan_uuid)->select('url')->first();
-        $info = $this->checkUrl(new Request(['url' => $scan->url]));
+        $info = $this->getPage($scan_uuid);
+        $output = [];
+        $count = 0;
 
         if ($info !== false) {
 
             $links = $info['dom']->getElementsByTagName('a');
-            $output = [];
 
             foreach ($links as $link) {
 
@@ -136,16 +139,18 @@ final class ScanController extends Controller
 
                 ];
             }
+
+            $count = $links->length;
         }
 
-        return response()->json(['count' => count($links), 'response' => $output]);
+        return response()->json(['count' => $count, 'response' => $output]);
     }
 
     public function stepImages($scan_uuid)
     {
-        $scan = Scan::where('uuid', $scan_uuid)->select('url')->first();
-        $info = $this->checkUrl(new Request(['url' => $scan->url]));
+        $info = $this->getPage($scan_uuid);
         $output = [];
+        $count = 0;
 
         if ($info !== false) {
             $imgs = $info['dom']->getElementsByTagName('img');
@@ -170,24 +175,22 @@ final class ScanController extends Controller
                     'class' => $img->getAttribute('class'),
                     'id' => $img->getAttribute('id'),
                 ];
-
-                // $output .= '<tr class="' . $class . '" title="' . $titolo . '"><td><a href="' . (stripos($href, $info['base_url']) !== false ? $href : $info['base_url'] . $href) . '" target="_blank"><img src="' . (stripos($href, $info['base_url']) !== false ? $href : $info['base_url'] . $href) . '" style="max-width:300px;"></a></td><td>' . $img->getAttribute('data-src') . '</td><td>' . $img->getAttribute('alt') . '</td><td>' . $img->getAttribute('title') . '</td><td>' . $img->getAttribute('height') . '</td><td>' . $img->getAttribute('width') . '</td><td>' . $img->getAttribute('class') . '</td><td>' . $img->getAttribute('id') . '</td></tr>';
-
             }
+
+            $count = $imgs->length;
         }
 
-        return response()->json(['count' => count($imgs), 'response' => $output]);
+        return response()->json(['count' => $count, 'response' => $output]);
     }
 
     public function stepHeadings($scan_uuid)
     {
-        $scan = Scan::where('uuid', $scan_uuid)->select('url')->first();
-        $info = $this->checkUrl(new Request(['url' => $scan->url]));
+        $info = $this->getPage($scan_uuid);
         $output = [];
+        $count_headings = 0;
 
         if ($info !== false) {
 
-            $count_headings = 0;
             $headings = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
 
             foreach ($headings as $heading) {
@@ -199,7 +202,6 @@ final class ScanController extends Controller
                         'class' => $temp->getAttribute('class'),
                         'id' => $temp->getAttribute('id'),
                     ];
-                    // $output .= '<tr><td>' . strtoupper($heading) . '</td><td>' . $temp->nodeValue . '</td><td>' . $temp->getAttribute('class') . '</td><td>' . $temp->getAttribute('id') . '</td></tr>';
                     $count_headings++;
                 }
             }
@@ -210,16 +212,13 @@ final class ScanController extends Controller
 
     public function stepMeta($scan_uuid)
     {
-        $scan = Scan::where('uuid', $scan_uuid)->select('url')->first();
-        $info = $this->checkUrl(new Request(['url' => $scan->url]));
+        $info = $this->getPage($scan_uuid);
         $output = [];
+        $count_meta = 0;
 
         if ($info !== false) {
 
             $metas = $info['dom']->getElementsByTagName('meta');
-            $count_meta = 0;
-            // $output .= '<tr><th>Type</th><th>Label</th><th>Content</th></tr>';
-            $output = [];
             foreach ($metas as $meta) {
 
                 $record = [];
@@ -259,18 +258,11 @@ final class ScanController extends Controller
                             'color' => $meta->getAttribute('content'),
                             'content' => $meta->getAttribute('content'),
                         ];
-                        // $output .= '<td><span style="color:' . $meta->getAttribute('content') . ';">' . $meta->getAttribute('content') . '</span></td></tr>';
                         $overridden = 1;
                     }
 
                     // check if og:url is correct
                     if ($meta->getAttribute('property') === 'og:url') {
-                        // if ($meta->getAttribute('content') == $info['url'] || $meta->getAttribute('content') == $info['url'] . '/') {
-                        //     $output .= '<td><span style="color:green;">' . $meta->getAttribute('content') . '</span></td></tr>';
-                        // } else {
-                        //     $output .= '<td><span style="color:red;">' . $meta->getAttribute('content') . '</span></td></tr>';
-                        // }
-
                         $record['content'] = [
                             'color' => ($meta->getAttribute('content') === $info['url'] || $meta->getAttribute('content') === $info['base_url'] . '/' ? 'green' : 'red'),
                             'content' => $meta->getAttribute('content'),
@@ -280,12 +272,6 @@ final class ScanController extends Controller
 
                     // check if twitter:url is correct
                     if ($meta->getAttribute('name') === 'twitter:url') {
-                        // if ($meta->getAttribute('content') == $info['url'] || $meta->getAttribute('content') == $info['url'] . '/') {
-                        //     $output .= '<td><span style="color:green;">' . $meta->getAttribute('content') . '</span></td></tr>';
-                        // } else {
-                        //     $output .= '<td><span style="color:red;">' . $meta->getAttribute('content') . '</span></td></tr>';
-                        // }
-
                         $record['content'] = [
                             'color' => ($meta->getAttribute('content') === $info['url'] || $meta->getAttribute('content') === $info['base_url'] . '/' ? 'green' : 'red'),
                             'content' => $meta->getAttribute('content'),
@@ -296,12 +282,6 @@ final class ScanController extends Controller
 
                     // check if og:image / twitter:image is correct
                     if ($meta->getAttribute('property') === 'og:image' || $meta->getAttribute('name') === 'twitter:image') {
-                        // if (@getimagesize($meta->getAttribute('content'))) {
-                        //     $output .= '<td><span style="color:green;">' . $meta->getAttribute('content') . '</span></td></tr>';
-                        // } else {
-                        //     $output .= '<td><span style="color:red;">' . $meta->getAttribute('content') . '</span></td></tr>';
-                        // }
-
                         $record['content'] = [
                             'color' => (@getimagesize($meta->getAttribute('content')) ? 'green' : 'red'),
                             'content' => $meta->getAttribute('content'),
@@ -316,7 +296,6 @@ final class ScanController extends Controller
                             'color' => '',
                             'content' => $meta->getAttribute('content'),
                         ];
-                        // $output .= '<td>' . $meta->getAttribute('content') . '</td></tr>';
                     }
 
                     $count_meta++;
@@ -330,8 +309,7 @@ final class ScanController extends Controller
 
     public function stepRobots($scan_uuid)
     {
-        $scan = Scan::where('uuid', $scan_uuid)->select('url')->first();
-        $info = $this->checkUrl(new Request(['url' => $scan->url]));
+        $info = $this->getPage($scan_uuid);
         $output = '';
 
         if ($info !== false) {
@@ -344,13 +322,9 @@ final class ScanController extends Controller
             }
             if ($response->getStatusCode() === 200) {
                 $robots = $response->getBody()->getContents();
-                $output .= ($robots !== null ? '<pre>' . ($robots) . '</pre>' : 'Empty robots.txt');
-
-                if ($robots === null) {
-                    $$output .= 'Empty robots.txt';
-                }
+                $output .= ($robots !== '' ? '<pre>' . $robots . '</pre>' : 'Empty robots.txt');
             } else {
-                $$output .= 'Robots.txt not found (error ' . $response->getStatusCode() . ')';
+                $output .= 'Robots.txt not found (error ' . $response->getStatusCode() . ')';
             }
         }
 
@@ -359,8 +333,7 @@ final class ScanController extends Controller
 
     public function stepSitemap($scan_uuid)
     {
-        $scan = Scan::where('uuid', $scan_uuid)->select('url')->first();
-        $info = $this->checkUrl(new Request(['url' => $scan->url]));
+        $info = $this->getPage($scan_uuid);
         $output = '';
 
         if ($info !== false) {
@@ -395,25 +368,17 @@ final class ScanController extends Controller
 
     public function stepOthers($scan_uuid)
     {
-        $scan = Scan::where('uuid', $scan_uuid)->select('url')->first();
-        $info = $this->checkUrl(new Request(['url' => $scan->url]));
+        $info = $this->getPage($scan_uuid);
         $output = [];
+        $count_others = 0;
 
         if ($info !== false) {
 
-            $count_others = 0;
             $linksCanonical = $info['dom']->getElementsByTagName('link');
 
-            // $output .= '<tr><th>Type</th><th>Value</th></tr>';
             foreach ($linksCanonical as $linkCanonical) {
                 if ($linkCanonical->getAttribute('rel') === 'canonical') {
                     $canonical = (mb_strpos($linkCanonical->getAttribute('href'), $info['url']) !== false ? $linkCanonical->getAttribute('href') : $info['base_url'] . $linkCanonical->getAttribute('href'));
-
-                    // if ($canonical == $info['url'] || $canonical == $info['url'] . '/') {
-                    //     $output .= '<tr><td>Canonical</td><td><span style="color:green;">' . $canonical . '</span></td></tr>';
-                    // } else {
-                    //     $output .= '<tr><td>Canonical</td><td><span style="color:red;">' . $canonical . '</span></td></tr>';
-                    // }
 
                     $output[] = [
                         'type' => 'Canonical',
@@ -424,7 +389,6 @@ final class ScanController extends Controller
                 }
 
                 if ($linkCanonical->getAttribute('rel') === 'alternate' && $linkCanonical->getAttribute('hreflang') !== '') {
-                    // $output .= '<tr><td>Hreflang (' . $linkCanonical->getAttribute('hreflang') . ')</td><td>' . $linkCanonical->getAttribute('href') . '</td></tr>';
                     $output[] = [
                         'type' => 'Hreflang (' . $linkCanonical->getAttribute('hreflang') . ')',
                         'value' => $linkCanonical->getAttribute('href'),
@@ -440,65 +404,186 @@ final class ScanController extends Controller
 
     public function stepStructuredData($scan_uuid)
     {
-        $scan = Scan::where('uuid', $scan_uuid)->select('url')->first();
-        $info = $this->checkUrl(new Request(['url' => $scan->url]));
-        $output = '';
+        $info = $this->getPage($scan_uuid);
+        $output = [];
+        $count_structured_data = 0;
 
         if ($info !== false) {
 
-            $count_structured_data = 0;
+            // JSON-LD: <script type="application/ld+json">
+            $scripts = $info['dom']->getElementsByTagName('script');
+            foreach ($scripts as $script) {
+                if (mb_strtolower($script->getAttribute('type')) !== 'application/ld+json') {
+                    continue;
+                }
 
-            $output .= 'WORK IN PROGRESS!';
-            // $datiStrutturati = $dom->getElementsByTagName('itemtype');
-            // $xpath = new DomXpath($dom);
+                $raw = mb_trim($script->nodeValue);
+                if ($raw === '') {
+                    continue;
+                }
 
-            // foreach ($xpath->query('//[@itemtype="http://schema.org/Product"]') as $rowNode) {
-            //     echo $rowNode->nodeValue; // will be 'this item'
-            // }
+                $decoded = json_decode($raw, true);
+                $valid = json_last_error() === JSON_ERROR_NONE;
 
-            // echo '<table class="table table-striped table-hover">';
-            // echo '<tr><th>Type</th><th>Value</th></tr>';
-            // foreach($datiStrutturati as $datoStrutturato){
-            //     echo $datoStrutturato->nodeValue;
-            // }
-            // echo '</table>';
+                $output[] = [
+                    'type' => 'JSON-LD',
+                    'schema' => $valid ? $this->extractSchemaTypes($decoded) : [],
+                    'valid' => $valid,
+                    'value' => $valid ? $decoded : $raw,
+                ];
+                $count_structured_data++;
+            }
+
+            // Microdata: elements declaring an itemscope with an itemtype
+            $xpath = new DOMXPath($info['dom']);
+            foreach ($xpath->query('//*[@itemscope][@itemtype]') as $node) {
+                $properties = [];
+                foreach ($xpath->query('.//*[@itemprop]', $node) as $prop) {
+                    $properties[$prop->getAttribute('itemprop')] = $this->microdataValue($prop);
+                }
+
+                $output[] = [
+                    'type' => 'Microdata',
+                    'schema' => array_filter([$node->getAttribute('itemtype')]),
+                    'valid' => true,
+                    'value' => $properties,
+                ];
+                $count_structured_data++;
+            }
         }
 
         return response()->json(['count' => $count_structured_data, 'response' => $output]);
     }
 
-    private function checkUrl(Request $request)
+    /**
+     * Pull the schema.org `@type`(s) out of a decoded JSON-LD payload,
+     * accounting for `@graph` wrappers and lists of items.
+     *
+     * @return list<string>
+     */
+    private function extractSchemaTypes(mixed $decoded): array
     {
-        $url = $request->get('url');
-        $auth_username = $request->get('auth_username');
-        $auth_password = $request->get('auth_password');
+        if (! is_array($decoded)) {
+            return [];
+        }
 
-        $site = parse_url($url); // get the array of the url
-        $base_url = $site['scheme'] . '://' . $site['host']; // build the base_url for later
+        $items = $decoded['@graph'] ?? $decoded;
 
-        $auth = 0;
+        if (! array_is_list($items)) {
+            $items = [$items];
+        }
+
+        $types = [];
+        foreach ($items as $item) {
+            if (is_array($item) && isset($item['@type'])) {
+                $types = array_merge($types, (array) $item['@type']);
+            }
+        }
+
+        return array_values(array_unique($types));
+    }
+
+    /**
+     * Resolve the value of a microdata `itemprop` element, following the
+     * HTML microdata rules for where the value lives per tag.
+     */
+    private function microdataValue(DOMElement $node): string
+    {
+        return match (mb_strtolower($node->nodeName)) {
+            'meta' => $node->getAttribute('content'),
+            'img', 'audio', 'video', 'embed', 'iframe', 'source', 'track' => $node->getAttribute('src'),
+            'a', 'area', 'link' => $node->getAttribute('href'),
+            'object' => $node->getAttribute('data'),
+            'data', 'meter' => $node->getAttribute('value'),
+            'time' => $node->getAttribute('datetime') !== '' ? $node->getAttribute('datetime') : mb_trim($node->nodeValue),
+            default => mb_trim($node->nodeValue),
+        };
+    }
+
+    /**
+     * Resolve the scan's page once and parse it into a DOM document.
+     *
+     * The fetched HTML is cached per scan so the multiple step endpoints do
+     * not each trigger a fresh HTTP request to the target site.
+     *
+     * @return array{auth: int, auth_username: ?string, auth_password: ?string, base_url: string, dom: DOMDocument, url: string}|false
+     */
+    private function getPage(string $scan_uuid): array|false
+    {
+        $scan = Scan::where('uuid', $scan_uuid)->select('url')->first();
+
+        if ($scan === null) {
+            return false;
+        }
+
+        $cacheKey = $this->cacheKey($scan_uuid);
+        $page = Cache::get($cacheKey);
+
+        if ($page === null) {
+            $page = $this->fetchPage($scan->url);
+
+            if ($page === false) {
+                return false;
+            }
+
+            Cache::put($cacheKey, $page, now()->addMinutes(10));
+        }
+
+        $dom = new DOMDocument;
+        @$dom->loadHTML(mb_encode_numericentity($page['html'], [0x80, 0x10FFFF, 0, ~0], 'UTF-8'));
+
+        return [
+            'auth' => $page['auth'],
+            'auth_username' => $page['auth_username'],
+            'auth_password' => $page['auth_password'],
+            'base_url' => $page['base_url'],
+            'dom' => $dom,
+            'url' => $page['url'],
+        ];
+    }
+
+    /**
+     * Fetch the raw page HTML and metadata. Returns a cacheable array (no DOM,
+     * which is not serializable) or false when the page is not reachable.
+     *
+     * @return array{auth: int, auth_username: ?string, auth_password: ?string, base_url: string, html: string, url: string}|false
+     */
+    private function fetchPage(string $url, ?string $authUsername = null, ?string $authPassword = null): array|false
+    {
+        $site = parse_url($url);
+
+        if (! isset($site['scheme'], $site['host'])) {
+            return false;
+        }
+
+        $base_url = $site['scheme'] . '://' . $site['host'];
+
         $client = new \GuzzleHttp\Client(['http_errors' => false]);
-        if ($auth_username !== '' && $auth_password !== '') {
-            $response = $client->request('GET', $url, ['auth' => [$auth_username, $auth_password]]);
+
+        if (filled($authUsername) && filled($authPassword)) {
+            $response = $client->request('GET', $url, ['auth' => [$authUsername, $authPassword]]);
             $auth = 1;
         } else {
             $response = $client->request('GET', $url, ['allow_redirects' => false]);
+            $auth = 0;
         }
 
-        if ($response->getStatusCode() === 200) { // only if the url is correct
-
-            $dom = new DOMDocument;
-            @$dom->loadHTML(mb_convert_encoding($response->getBody()->getContents(), 'HTML-ENTITIES', 'UTF-8'));
-
-            return [
-                'auth' => $auth,
-                'base_url' => $base_url,
-                'dom' => $dom,
-                'url' => $url,
-            ];
+        if ($response->getStatusCode() !== 200) {
+            return false;
         }
 
-        return false;
+        return [
+            'auth' => $auth,
+            'auth_username' => $authUsername,
+            'auth_password' => $authPassword,
+            'base_url' => $base_url,
+            'html' => $response->getBody()->getContents(),
+            'url' => $url,
+        ];
+    }
 
+    private function cacheKey(string $scan_uuid): string
+    {
+        return 'tools:scan:' . $scan_uuid . ':page';
     }
 }
