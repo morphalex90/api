@@ -43,16 +43,18 @@ final class ScanController extends Controller
             return response()->json(['message' => 'Page is not reachable'], 404);
         }
 
+        $uuid = (string) Str::uuid();
+
         $scan = Scan::create([
             'url' => $request->get('url'),
-            'uuid' => Str::uuid(),
+            'uuid' => $uuid,
             'ip_address' => $request->ip(),
         ]);
 
         // Prime the cache so the first step does not refetch the page.
-        Cache::put($this->cacheKey($scan->uuid), $page, now()->addMinutes(10));
+        Cache::put($this->cacheKey($uuid), $page, now()->addMinutes(10));
 
-        return response()->json(['uuid' => $scan->uuid], 200);
+        return response()->json(['uuid' => $uuid], 200);
     }
 
     /**

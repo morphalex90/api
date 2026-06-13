@@ -4,7 +4,12 @@
       "Bash(vendor/bin/pint --dirty --format agent)",
       "Bash(php artisan *)",
       "Bash(php -l app/Http/Controllers/Tools/ScanController.php)",
-      "Bash(php -l app/Http/Controllers/Tools/StarController.php)"
+      "Bash(php -l app/Http/Controllers/Tools/StarController.php)",
+      "Bash(cd /Users/pieronanni/Documents/GitHub/tools && grep -rln \"structured\\\\|step_\\\\|StructuredData\\\\|average_star\\\\|scans\" src/ 2>/dev/null | head -40)",
+      "Read(//Users/pieronanni/Documents/GitHub/tools/**)"
+    ],
+    "additionalDirectories": [
+      "/Users/pieronanni/Documents/GitHub/tools/src/pages"
     ]
   }
 }
