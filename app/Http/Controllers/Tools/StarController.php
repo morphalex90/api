@@ -44,10 +44,9 @@ final class StarController extends Controller
      */
     public function averageStar()
     {
-        $stars = Star::all();
-        $countStars = number_format($stars->avg('vote'), 2);
-        $averageStars = $stars->count();
-
-        return response()->json(['count' => $averageStars, 'average' => $countStars]);
+        return response()->json([
+            'count' => Star::count(),
+            'average' => number_format((float) Star::avg('vote'), 2),
+        ]);
     }
 }

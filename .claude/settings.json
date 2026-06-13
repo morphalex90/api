@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(vendor/bin/pint --dirty --format agent)",
+      "Bash(php artisan *)",
+      "Bash(php -l app/Http/Controllers/Tools/ScanController.php)",
+      "Bash(php -l app/Http/Controllers/Tools/StarController.php)"
+    ]
+  }
+}
